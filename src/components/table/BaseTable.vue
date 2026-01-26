@@ -2,7 +2,7 @@
   <div class="basic-table-wrapper">
     <div class="basic-table-container">
       <div class="table-toolbar">
-        
+
         <!-- <div class="toolbar-left">
           <slot name="headerTitle">
             <h3 class="title">{{ title }}</h3>
@@ -11,14 +11,8 @@
 
         <div class="toolbar-center">
           <div class="custom-search-bar">
-            <a-input
-              v-model:value="searchParams.keyword"
-              :placeholder="searchText || '请输入搜索内容'"
-              allow-clear
-              style="width: 200px"
-              @pressEnter="handleSearch"
-              size="large"
-            />
+            <a-input v-model:value="searchParams.keyword" :placeholder="searchText || '请输入搜索内容'" allow-clear
+              style="width: 200px" @pressEnter="handleSearch" size="large" />
 
             <slot name="searchExtend" :model="searchParams"></slot>
 
@@ -32,22 +26,15 @@
         <div class="toolbar-right">
           <a-space>
             <slot name="toolbar"></slot>
-               <a-button  @click="refresh">
-                  <ReloadOutlined />
-               </a-button>
+            <a-button @click="refresh">
+              <ReloadOutlined />
+            </a-button>
           </a-space>
         </div>
       </div>
 
-      <a-table
-        ref="tableRef"
-        :columns="columns"
-        :dataSource="dataSource"
-        :loading="loading"
-        :pagination="paginationProps"
-        @change="handleTableChange"
-        v-bind="$attrs"
-      >
+      <a-table ref="tableRef" :columns="columns" :dataSource="dataSource" :loading="loading"
+        :pagination="paginationProps" @change="handleTableChange" v-bind="$attrs">
         <template #bodyCell="scope">
           <slot v-if="scope.column.dataIndex" :name="scope.column.dataIndex" v-bind="scope"></slot>
           <template v-else>{{ scope.text }}</template>
@@ -69,7 +56,7 @@ interface Props {
   loading?: boolean;
   pagination?: PageOption | boolean;
   title?: string;
-  searchText?:string;
+  searchText?: string;
   showToolbar?: boolean;
 }
 
@@ -99,10 +86,12 @@ const paginationProps = computed(() => {
 });
 
 const emitChange = (pag: TablePaginationConfig) => {
+  console.log(searchParams.value);
+  
   emit('change', {
     page: pag.current,
     pageSize: pag.pageSize,
-    ...searchParams.value, 
+    ...searchParams.value,
   });
 };
 
@@ -112,8 +101,11 @@ const handleSearch = () => {
 };
 
 const handleReset = () => {
+  for (const key in searchParams.value) {
+    searchParams.value[key] = undefined;
+  }
   searchParams.value = { keyword: '' };
-  const newPagination = { ...paginationProps.value, current: 1 };
+  const newPagination = { ...paginationProps.value, current: 1};
   emitChange(newPagination as TablePaginationConfig);
 };
 
@@ -145,7 +137,8 @@ defineExpose({ refresh });
   flex-wrap: wrap;
 }
 
-.toolbar-left, .toolbar-right {
+.toolbar-left,
+.toolbar-right {
   flex-shrink: 0;
 }
 

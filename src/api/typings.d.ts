@@ -1,4 +1,110 @@
 declare namespace API {
+  type AdminChargeRequest = {
+    userId?: number
+    amount?: number
+    remark?: string
+  }
+
+  type AiGenerateLogVO = {
+    id?: number
+    traceId?: string
+    userId?: number
+    taskType?: string
+    modelName?: string
+    inputTokens?: number
+    outputTokens?: number
+    totalCost?: number
+    status?: number
+    errorMsg?: string
+    duration?: number
+    createTime?: string
+  }
+
+  type AiKeyAddRequest = {
+    provider?: string
+    accessKey?: string
+  }
+
+  type AiKeyQueryRequest = {
+    current?: number
+    pageSize?: number
+    sortField?: string
+    sortOrder?: string
+    provider?: string
+    key?: string
+  }
+
+  type AiKeyVO = {
+    id?: string
+    provider?: string
+    accessKey?: string
+    balance?: number
+    status?: number
+    lastUsedTime?: string
+    errorCount?: number
+  }
+
+  type AiLogQueryRequest = {
+    current?: number
+    pageSize?: number
+    sortField?: string
+    sortOrder?: string
+    traceId?: string
+    status?: number
+  }
+
+  type AiModel = {
+    id?: number
+    modelName?: string
+    modelCode?: string
+    modelType?: string
+    provider?: string
+    baseUrl?: string
+    maxTokens?: number
+    inputPrice?: number
+    outputPrice?: number
+    status?: number
+    createTime?: string
+    updateTime?: string
+  }
+
+  type AiModelAddRequest = {
+    modelName?: string
+    modelCode?: string
+    modelType?: string
+    provider?: string
+    baseUrl?: string
+    maxTokens?: number
+  }
+
+  type AiModelQueryRequest = {
+    current?: number
+    pageSize?: number
+    sortField?: string
+    sortOrder?: string
+    modelName?: string
+    modelType?: string
+  }
+
+  type AiModelUpdateRequest = {
+    id?: string
+    modelName?: string
+    modelCode?: string
+    modelType?: string
+    provider?: string
+    baseUrl?: string
+    maxTokens?: number
+    status?: number
+  }
+
+  type AiModelVO = {
+    id?: string
+    modelName?: string
+    modelCode?: string
+    modelType?: string
+    provider?: string
+  }
+
   type AppAddRequest = {
     initPrompt?: string
   }
@@ -15,7 +121,7 @@ declare namespace API {
   }
 
   type AppQueryRequest = {
-    pageNum?: number
+    current?: number
     pageSize?: number
     sortField?: string
     sortOrder?: string
@@ -59,6 +165,12 @@ declare namespace API {
     user?: UserVO
   }
 
+  type BaseResponseAiModel = {
+    code?: number
+    data?: AiModel
+    message?: string
+  }
+
   type BaseResponseAppVO = {
     code?: number
     data?: AppVO
@@ -68,6 +180,12 @@ declare namespace API {
   type BaseResponseBoolean = {
     code?: number
     data?: boolean
+    message?: string
+  }
+
+  type BaseResponseListAiModelVO = {
+    code?: number
+    data?: AiModelVO[]
     message?: string
   }
 
@@ -83,6 +201,24 @@ declare namespace API {
     message?: string
   }
 
+  type BaseResponsePageAiGenerateLogVO = {
+    code?: number
+    data?: PageAiGenerateLogVO
+    message?: string
+  }
+
+  type BaseResponsePageAiKeyVO = {
+    code?: number
+    data?: PageAiKeyVO
+    message?: string
+  }
+
+  type BaseResponsePageAiModel = {
+    code?: number
+    data?: PageAiModel
+    message?: string
+  }
+
   type BaseResponsePageAppVO = {
     code?: number
     data?: PageAppVO
@@ -92,6 +228,12 @@ declare namespace API {
   type BaseResponsePageChatHistory = {
     code?: number
     data?: PageChatHistory
+    message?: string
+  }
+
+  type BaseResponsePagePointsVO = {
+    code?: number
+    data?: PagePointsVO
     message?: string
   }
 
@@ -119,6 +261,12 @@ declare namespace API {
     message?: string
   }
 
+  type BaseResponseVoid = {
+    code?: number
+    data?: Record<string, any>
+    message?: string
+  }
+
   type ChatHistory = {
     id?: number
     thinkingContent?: string
@@ -133,7 +281,7 @@ declare namespace API {
   }
 
   type ChatHistoryQueryRequest = {
-    pageNum?: number
+    current?: number
     pageSize?: number
     sortField?: string
     sortOrder?: string
@@ -162,6 +310,10 @@ declare namespace API {
     appId: number
   }
 
+  type getAiModelByIdParams = {
+    id: number
+  }
+
   type getAppVOByIdAdminParams = {
     id: number
   }
@@ -176,6 +328,10 @@ declare namespace API {
 
   type getUserVOByIdParams = {
     id: number
+  }
+
+  type listAiModelVOParams = {
+    modelName: string
   }
 
   type listAppChatHistoryParams = {
@@ -202,6 +358,33 @@ declare namespace API {
     updateTime?: string
   }
 
+  type PageAiGenerateLogVO = {
+    records?: AiGenerateLogVO[]
+    pageNumber?: number
+    pageSize?: number
+    totalPage?: number
+    totalRow?: number
+    optimizeCountQuery?: boolean
+  }
+
+  type PageAiKeyVO = {
+    records?: AiKeyVO[]
+    pageNumber?: number
+    pageSize?: number
+    totalPage?: number
+    totalRow?: number
+    optimizeCountQuery?: boolean
+  }
+
+  type PageAiModel = {
+    records?: AiModel[]
+    pageNumber?: number
+    pageSize?: number
+    totalPage?: number
+    totalRow?: number
+    optimizeCountQuery?: boolean
+  }
+
   type PageAppVO = {
     records?: AppVO[]
     pageNumber?: number
@@ -220,6 +403,15 @@ declare namespace API {
     optimizeCountQuery?: boolean
   }
 
+  type PagePointsVO = {
+    records?: PointsVO[]
+    pageNumber?: number
+    pageSize?: number
+    totalPage?: number
+    totalRow?: number
+    optimizeCountQuery?: boolean
+  }
+
   type PageUserVO = {
     records?: UserVO[]
     pageNumber?: number
@@ -227,6 +419,34 @@ declare namespace API {
     totalPage?: number
     totalRow?: number
     optimizeCountQuery?: boolean
+  }
+
+  type PointsQueryRequest = {
+    current?: number
+    pageSize?: number
+    sortField?: string
+    sortOrder?: string
+    userAccount?: string
+    bizNo?: string
+    type?: number
+    createTimeStart?: string
+    createTimeEnd?: string
+  }
+
+  type PointsVO = {
+    id?: number
+    userId?: number
+    amount?: number
+    type?: number
+    currentPoints?: number
+    bizNo?: string
+    refId?: number
+    remark?: string
+    createTime?: string
+    isIncome?: boolean
+    userAccount?: string
+    userName?: string
+    avatar?: string
   }
 
   type ServerSentEventString = true
@@ -253,6 +473,7 @@ declare namespace API {
     editTime?: string
     createTime?: string
     updateTime?: string
+    userStatus?: number
     isDelete?: number
   }
 
@@ -271,7 +492,7 @@ declare namespace API {
   }
 
   type UserQueryRequest = {
-    pageNum?: number
+    current?: number
     pageSize?: number
     sortField?: string
     sortOrder?: string
@@ -280,6 +501,7 @@ declare namespace API {
     userAccount?: string
     userProfile?: string
     role?: string
+    userStatus?: number
   }
 
   type UserRegisterRequest = {
@@ -287,6 +509,15 @@ declare namespace API {
     userPassword?: string
     checkPassword?: string
     inviteCode?: string
+  }
+
+  type UserUpdateByAdminRequest = {
+    id?: number
+    userName?: string
+    avatar?: string
+    profile?: string
+    role?: string
+    userStatus?: number
   }
 
   type UserUpdateRequest = {
@@ -304,6 +535,7 @@ declare namespace API {
     profile?: string
     role?: string
     isVip?: boolean
+    userStatus?: number
     createTime?: string
   }
 }

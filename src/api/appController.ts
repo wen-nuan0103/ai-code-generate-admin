@@ -166,6 +166,18 @@ export async function listMyAppVoByPage(
   })
 }
 
+/** 此处后端没有提供注释 POST /app/offline */
+export async function offline(body: API.AppDeployRequest, options?: { [key: string]: any }) {
+  return request<API.BaseResponseBoolean>('/app/offline', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
 /** 此处后端没有提供注释 POST /app/update */
 export async function updateApp(body: API.AppUpdateRequest, options?: { [key: string]: any }) {
   return request<API.BaseResponseBoolean>('/app/update', {

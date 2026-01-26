@@ -7,31 +7,31 @@
 
             <a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" theme="dark" mode="inline"
                 @click="handleMenuClick">
-                <a-menu-item key="/dashboard">
-                    <DashboardOutlined />
-                    <span>仪表盘</span>
-                </a-menu-item>
+                <template v-for="item in menuList" :key="item.key">
 
-                <a-menu-item key="/users">
-                    <user-outlined />
-                    <span>用户管理</span>
-                </a-menu-item>
-
-                <a-sub-menu key="/model">
-                    <template #title>
-                        <span>
-                            <RobotOutlined />
-                            <span>模型管理</span>
-                        </span>
+                    <template v-if="item.children && item.children.length > 0">
+                        <a-sub-menu :key="item.key">
+                            <template #title>
+                                <span>
+                                    <component :is="item.icon" v-if="item.icon" />
+                                    <span>{{ item.title }}</span>
+                                </span>
+                            </template>
+                            <a-menu-item v-for="subItem in item.children" :key="subItem.key">
+                                <component :is="subItem.icon" v-if="subItem.icon" />
+                                <span>{{ subItem.title }}</span>
+                            </a-menu-item>
+                        </a-sub-menu>
                     </template>
-                    <a-menu-item key="/model/option1">模型选项1</a-menu-item>
-                    <a-menu-item key="/model/option2">模型选项2</a-menu-item>
-                </a-sub-menu>
 
-                <a-menu-item key="/upload">
-                    <upload-outlined />
-                    <span>文件上传</span>
-                </a-menu-item>
+                    <template v-else>
+                        <a-menu-item :key="item.key">
+                            <component :is="item.icon" v-if="item.icon" />
+                            <span>{{ item.title }}</span>
+                        </a-menu-item>
+                    </template>
+
+                </template>
             </a-menu>
         </a-layout-sider>
 
@@ -80,10 +80,7 @@
 import { ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import {
-    DashboardOutlined,
     UserOutlined,
-    RobotOutlined,
-    UploadOutlined,
     MenuUnfoldOutlined,
     MenuFoldOutlined,
     LogoutOutlined
@@ -91,6 +88,7 @@ import {
 import { useUserStore } from '@/stores/user'
 import { logout } from '@/api/userController';
 import { message } from 'ant-design-vue';
+import { menuList, type MenuItem } from '@/config/menu';
 
 const collapsed = ref<boolean>(false);
 const selectedKeys = ref<string[]>([]);
@@ -118,6 +116,21 @@ const handleLogout = async () => {
     }
 }
 
+const getBreadcrumbByPath = (menus: MenuItem[], path: string): string[] => {
+    for (const item of menus) {
+        if (item.key === path) {
+            return [item.title];
+        }
+
+        if (item.children) {
+            const result = getBreadcrumbByPath(item.children, path);
+            if (result.length > 0) {
+                return [item.title, ...result];
+            }
+        }
+    }
+    return [];
+};
 
 // 核心：监听路由变化，统一处理高亮、展开和面包屑
 watch(
@@ -128,10 +141,19 @@ watch(
         if (newPath.split('/').length > 2 && !openKeys.value.includes(parentPath)) {
             openKeys.value.push(parentPath);
         }
-        breadList.value = newPath
-            .split('/')
-            .filter(item => item)
-            .map(item => item.charAt(0).toUpperCase() + item.slice(1));
+        const matchedBreadcrumbs = getBreadcrumbByPath(menuList, newPath);
+        if (matchedBreadcrumbs.length > 0) {
+            breadList.value = matchedBreadcrumbs;
+        } else {
+            if (route.meta?.title) {
+                breadList.value = [route.meta.title as string];
+            } else {
+                breadList.value = newPath
+                    .split('/')
+                    .filter(item => item)
+                    .map(item => item.charAt(0).toUpperCase() + item.slice(1));
+            }
+        }
     },
     { immediate: true }
 );
